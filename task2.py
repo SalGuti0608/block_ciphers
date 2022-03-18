@@ -10,20 +10,39 @@ blockLen = AES.block_size
 intKey = get_random_bytes(16)
 intIv = get_random_bytes(16)
 
+def submitAndAttack():
+    inputQuery = input("[Will be attacked]Message?: ")
+    encodedQuery = submit(inputQuery, intKey, intIv)
+    print(encodedQuery)
+    #perform the attack under here!
+
+    aes = AES.new(intKey, AES.MODE_CBC, intIv)
+    numBlocks = len(encodedQuery) // blockLen
+    plaintext = b''
+    xorStr = intIv
+
+    for i in range(0, numBlocks):
+        msgIdx = i * blockLen
+        msg = encodedQuery[msgIdx: msgIdx+blockLen]
+        print(msg)
+        
+        decMsg = aes.decrypt(msg)
+        xorMsg = strxor(xorStr, decMsg)
+        plaintext += xorMsg
+        print(xorMsg)
+
+        for thing in range(len(msg)):
+           print(f"at index:{thing} with the bit: {msg[thing]}")
+        xorMsg = msg
+
+    print(plaintext)
+
+
 def submitAndVerify():
     inputQuery = input("Message?: ")
     encodedQuery = submit(inputQuery, intKey, intIv)
     verRes = verify(encodedQuery, intKey, intIv)
     print(verRes)
-
-def submitAndAttack():
-    inputQuery = input("[Will be attacked]Message?: ")
-    encodedQuery = submit(inputQuery, intKey, intIv)
-    #perform the attack under here!
-
-    verRes = verify(encodedQuery, intKey, intIv)
-    print(verRes)
-
 
 def submit(query, cipherKey, iv):
     prependStr = "userid=456;userdata="

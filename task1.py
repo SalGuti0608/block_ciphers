@@ -42,10 +42,6 @@ def decryptCBC(encQuery, cipherKey, iv):
         msg = encQuery[msgIdx: msgIdx+blockLen]
         decMsg = aes.decrypt(msg)
         xorMsg = strxor(xorStr, decMsg)
-        #print(xorMsg)
-        #for thing in range(len(msg)):
-            #print(f"at index:{thing} with the char: {msg[thing]}")
-        plaintext += xorMsg
         xorMsg = msg
 
     #the below line is how we would get back to our original string!, However we avoid this step with our attack
