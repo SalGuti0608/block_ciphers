@@ -4,6 +4,7 @@ from Crypto.Random import get_random_bytes
 import sys
 
 from SDECB import ECB
+from SDCBC import CBC
 
 
 def main():
@@ -25,9 +26,10 @@ def task1(inFile):
     info = im.convert("RGB").tobytes()
     ogLen = len(info)
     ecbInfo = ECB(info)
-    #cbcInfo = CBC(info)
+    cbcInfo = CBC(info)
 
     createNewBMP(im, ecbInfo, ogLen,"ECB")
+    createNewBMP(im, cbcInfo, ogLen,"CBC")
 
 def createNewBMP(img,encryptedInfo, infoLen, encType):
     newImage = to_RBG(encryptedInfo[:infoLen])
