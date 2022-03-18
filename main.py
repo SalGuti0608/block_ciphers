@@ -1,4 +1,50 @@
+from PIL import Image
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+import sys
 
+from SDECB import ECB
+
+
+def main():
+    block_length = AES.block_size
+    cipher_key = get_random_bytes(16)
+    iv = get_random_bytes(16)
+
+
+    if len(sys.argv) >= 2:
+        infile = sys.argv[1] 
+        task1(infile)
+
+def task1(inFile):
+    try:
+        im = Image.open(inFile, mode="r")
+    except:
+        print(f"Thats is not a valid file.")
+        return
+    info = im.convert("RGB").tobytes()
+    ogLen = len(info)
+    ecbInfo = ECB(info)
+    #cbcInfo = CBC(info)
+
+    createNewBMP(im, ecbInfo, ogLen,"ECB")
+
+def createNewBMP(img,encryptedInfo, infoLen, encType):
+    newImage = to_RBG(encryptedInfo[:infoLen])
+    im2 = Image.new(img.mode, img.size) #let's go pillow for making image processing on our parts easy
+    im2.putdata(newImage)
+    im2.save(encType + "res.BMP", "BMP")
+
+def to_RBG(information):
+    infoLen = len(information)
+    r,g,b = tuple(
+        map(
+            lambda d:
+            [information[i] for i in range(0, infoLen) if i % 3 == d], [0,1,2])
+        )
+    pixels = tuple(zip(r,g,b))
+    return pixels
 
 if __name__ == "__main__":
     print("Trying to understand AES, CBC, and ECS. :)")
+    main()
