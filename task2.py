@@ -1,3 +1,4 @@
+from pydoc import plain
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import urllib.parse #god bless the Python gods for having a built-in function for just about anything
@@ -20,50 +21,28 @@ def submitAndAttack():
 
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
     numBlocks = len(encodedQuery) // blockLen
-    print(encodedQuery)
-    encodedQuery = attack(encodedQuery)
-    print(encodedQuery)
     plaintext = b''
     xorStr = intIv
 
-    for i in range(0, 0):
+    for i in range(0, numBlocks):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
-
-        print(f"Block {i}: {msg}")
         # print(len(str(msg)))
         # for c in str(msg):
         #     print(c, end=" ")
         # print()
-
         decMsg = aes.decrypt(msg) 
-        print(f"Decrypted {len(decMsg)} before xor: {decMsg}")
         xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
-        
         plaintext += xorMsg
         xorMsg = msg
 
-    print(f"plaintext: {plaintext}")
+    plaintext = plaintext.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ')
 
-    verRes = verify(encodedQuery, intKey, intIv)
+    plaintext = plaintext.encode()
+
+    verRes = verify(plaintext, intKey, intIv, True)
     print(f"Result: {verRes}")
 
-
-def attack(ciphertext):
-    blocks = []
-    num_blocks = len(ciphertext) // blockLen
-
-    for i in range(num_blocks - 1): # Removing padding block cuz we can >:)
-        blocks.append(ciphertext[i*16: 16 + (i*16)])
-    
-    l = list(blocks[1])
-    print(l)
-    l[0] = ord(chr(l[0])) ^ ord("B") ^ ord(";")
-    l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
-    l[11] = ord(chr(l[11]))^ ord("B") ^ ord(";")
-    print(blocks[1])
-    print(b''.join(l))
-    # TODO return joint ciphertext string
 
 def submitAndVerify():
     inputQuery = input("Message?: ")
@@ -82,12 +61,15 @@ def submit(query, cipherKey, iv):
     cbcQuery = CBC(bytesQuery, cipherKey, iv)
     return cbcQuery
 
-def verify(encQuery, cipherKey, iv):
-    isAdmin = b";admin=true;"
+def verify(encQuery, cipherKey, iv, attacked=False):
+    isAdmin = b';admin=true;'
+
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
-    plaintext = decryptCBC(encQuery, cipherKey, iv)
-
+    if not attacked:
+        plaintext = decryptCBC(encQuery, cipherKey, iv)
+    else:
+        plaintext = encQuery
     #THE UNDERNEATH COMMENT HELPS HELLA FOR DEBUGGING
     #print(plaintext)
 
