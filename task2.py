@@ -6,9 +6,11 @@ from Crypto.Util.strxor import strxor
 from task1 import CBC, decryptCBC
 
 blockLen = AES.block_size
-#int stands for intial
-intKey = get_random_bytes(16)
-intIv = get_random_bytes(16)
+intKey  = b'\x96\x14\xdf\x8f7\xa5\x90tz\x9fBs+s\x01\x06'
+intIv = b'A^3l\x1e\x14\x8e\x94\xb6\x077P\x19j\x8c\xca'
+
+#intKey = get_random_bytes(16)
+#intIv = get_random_bytes(16)
 
 def submitAndAttack():
     inputQuery = input("[Will be attacked]Message?: ")
@@ -26,20 +28,13 @@ def submitAndAttack():
         msg = encodedQuery[msgIdx: msgIdx+blockLen]
 
 
-        print(f"current ciphertext block:\n{msg}")
-        for thing in range(len(msg)):
-           print(f"at index:{thing} with the bit: {msg[thing]}")
+        print(f"Block {i}: {msg}")
 
         decMsg = aes.decrypt(msg)
         xorMsg = strxor(xorStr, decMsg)
+        print(f"Block {i}: {xorMsg}")
+        
         plaintext += xorMsg
-        '''
-        print(f"Decoded-plaintext:{xorMsg}")
-
-        for thing in range(len(xorMsg)):
-           print(f"at index:{thing} with the bit: {xorMsg[thing]}")
-        '''
-
         xorMsg = msg
 
     print(plaintext)
@@ -55,7 +50,7 @@ def submitAndVerify():
     print(verRes)
 
 def submit(query, cipherKey, iv):
-    prependStr = "userid=456;userdata="
+    prependStr = "userid=456; userdata="
     appendStr = ";session-id=31337"
     # we have to get the 
     fullQuery = prependStr + query + appendStr
