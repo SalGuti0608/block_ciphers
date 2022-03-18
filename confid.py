@@ -1,10 +1,11 @@
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import urllib.parse #god bless the Python gods for having a built-in function for just about anything
+from Crypto.Util.strxor import strxor
 
 from SDCBC import CBC
 
-block_length = AES.block_size
+blockLen = AES.block_size
 #int stands for intial
 intKey = get_random_bytes(16)
 intIv = get_random_bytes(16)
@@ -16,9 +17,9 @@ def submitAndVerify():
     verRes = verify(encodedQuery, intKey, intIv)
     print(verRes)
 
-    #perform the byte flip shit
-
+    #perform the attack under here!
  
+
 
 
 def submit(query, cipherKey, iv):
@@ -35,13 +36,26 @@ def submit(query, cipherKey, iv):
 def verify(encQuery, cipherKey, iv):
     isAdmin = b";admin=true;"
 
-    #DON'T TRY DECODING THE STRING, AES WILL ONLY YELL AT YOU!
-    '''
-    aes = AES.new(intKey, AES.MODE_CBC, intIv) 
-    plaintext = aes.decrypt(encodedQuery).decode("UTF-8")
-    '''
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
+    #beginning of our own decryption
+    aes = AES.new(cipherKey, AES.MODE_CBC, iv)
+    numBlocks = len(encQuery) // blockLen
 
+    plaintext = b''
+    xorStr = iv
+    for i in range(0, numBlocks):
+        msgIdx = i * blockLen
+        msg = encQuery[msgIdx: msgIdx+blockLen]
+        decMsg = aes.decrypt(msg)
+        xorMsg = strxor(xorStr, decMsg)
+        plaintext += xorMsg
+        xorMsg = msg
+    #end of our own decryption
+    #decrypted Message = plaintext
+
+    print(plaintext)
     res = isAdmin in encQuery 
+    temp = b"admin" in plaintext
+    print(temp)
     return res
