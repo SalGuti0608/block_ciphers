@@ -64,8 +64,8 @@ def submitAndAttack():
     print(f"PAINtext: {paintext}")
 
 
-
-    verRes = verify(encodedQuery, intKey, intIv)
+    attacked = True
+    verRes = verify(paintext, intKey, intIv, attacked)
     print(f"Result: {verRes}")
 
 
@@ -108,15 +108,15 @@ def submit(query, cipherKey, iv):
     cbcQuery = CBC(bytesQuery, cipherKey, iv)
     return cbcQuery
 
-def verify(encQuery, cipherKey, iv):
+def verify(encQuery, cipherKey, iv, attacked=False):
     isAdmin = b";admin=true;"
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
-    plaintext = decryptCBC(encQuery, cipherKey, iv)
-
-    #THE UNDERNEATH COMMENT HELPS HELLA FOR DEBUGGING
-    #print(plaintext)
-
-    res = isAdmin in plaintext 
+    if attacked == False:
+        plaintext = decryptCBC(encQuery, cipherKey, iv)
+        res = isAdmin in plaintext 
+    else:
+        test = b"sossion"
+        res = test in encQuery
     return res
 
