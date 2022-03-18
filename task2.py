@@ -6,44 +6,49 @@ from Crypto.Util.strxor import strxor
 from task1 import CBC, decryptCBC
 
 blockLen = AES.block_size
-intKey  = b'\x96\x14\xdf\x8f7\xa5\x90tz\x9fBs+s\x01\x06'
-intIv = b'A^3l\x1e\x14\x8e\x94\xb6\x077P\x19j\x8c\xca'
+intKey = b'\x96\x14\xdf\x8f\xa5\x90\x9f\x01\x06\xcf\x15\x89\x0c\xa7\x17\xd0'
+intIv = b'\x14\x1e\x14\x8e\x94\xb6\xa5\xdf\x14\x1e\x14\x8e\x94\xb6\xa5\xdf'
 
 #intKey = get_random_bytes(16)
 #intIv = get_random_bytes(16)
 
 def submitAndAttack():
     inputQuery = input("[Will be attacked]Message?: ")
+    print()
     encodedQuery = submit(inputQuery, intKey, intIv)
-    #print(encodedQuery)
     #perform the attack under here!
 
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
     numBlocks = len(encodedQuery) // blockLen
     print(encodedQuery)
-    encodedQuery = attack(encodedQuery)
-    print(encodedQuery)
+
     plaintext = b''
     xorStr = intIv
 
-    for i in range(0, 0):
+    paintext = b''
+    tmp = b'\x1e\x1e\x14\x8e\x94\xb6\xa5\xdf\x14\x1e\x14\x8e\x94\xb6\xa5\xdf'
+
+    for i in range(0, numBlocks):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
 
-        print(f"Block {i}: {msg}")
-        # print(len(str(msg)))
-        # for c in str(msg):
-        #     print(c, end=" ")
-        # print()
-
+        print(f"Block {i}")
         decMsg = aes.decrypt(msg) 
-        print(f"Decrypted {len(decMsg)} before xor: {decMsg}")
+        print(f"Decrypted message {len(decMsg)} before xor: {decMsg}")
+
         xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
-        
         plaintext += xorMsg
-        xorMsg = msg
+        print(f"Decrypted message {len(xorMsg)} after xor: {xorMsg}")
+
+        temp = strxor(tmp, decMsg)
+        paintext += temp
+        print(f"bitflpped message {len(temp)} after xor: {temp}")
+        
+        xorMsg = msg    #msg is technically the n-1 ciphertext block
+        temp = msg
 
     print(f"plaintext: {plaintext}")
+    print(f"PAINtext: {paintext}")
 
     verRes = verify(encodedQuery, intKey, intIv)
     print(f"Result: {verRes}")
@@ -58,12 +63,14 @@ def attack(ciphertext):
     
     l = list(blocks[1])
     print(l)
+    '''
     l[0] = ord(chr(l[0])) ^ ord("B") ^ ord(";")
     l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
     l[11] = ord(chr(l[11]))^ ord("B") ^ ord(";")
     print(blocks[1])
     print(b''.join(l))
     # TODO return joint ciphertext string
+    '''
 
 def submitAndVerify():
     inputQuery = input("Message?: ")
