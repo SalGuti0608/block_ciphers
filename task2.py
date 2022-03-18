@@ -24,9 +24,16 @@ def submitAndAttack():
     plaintext = b''
     xorStr = intIv
 
+
     for i in range(0, numBlocks):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
+
+        if i == 0:
+            flippedC0 = attack(encodedQuery)
+            attackMsg = flippedC0[0]
+            Msg = attackMsg 
+
 
         decMsg = aes.decrypt(msg) 
         xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
@@ -56,17 +63,16 @@ def attack(ciphertext):
     l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
     l[11] = ord(chr(l[11]))^ ord("B") ^ ord(";")
 
-    blocks[0] = 1 #put back our intial ciphetext block
+    blocks[0] = l #put back our intial ciphetext block
 
     res = b""
     for block in blocks:
-        print(len(block))
         for c in block:
             temp = str(c)
             temp2 = temp.encode("UTF-8")
             res += temp2
 
-    return res
+    return blocks 
 
 def submitAndVerify():
     inputQuery = input("Message?: ")
