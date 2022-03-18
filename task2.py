@@ -42,9 +42,6 @@ def submitAndAttack():
         xorMsg = msg    #msg is technically the n-1 ciphertext block
         temp = msg
 
-    plaintext = plaintext.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ')
-    plaintext = plaintext.encode()
-
     verRes = verify(plaintext, intKey, intIv, True)
     print(f"Verify-Result: {verRes}")
 
@@ -100,6 +97,8 @@ def verify(encQuery, cipherKey, iv, attacked=False):
         plaintext = decryptCBC(encQuery, cipherKey, iv)
     else:
         plaintext = encQuery
+        plaintext = plaintext.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ')
+        plaintext = plaintext.encode()
     #THE UNDERNEATH COMMENT HELPS HELLA FOR DEBUGGING
     #print(plaintext)
 
