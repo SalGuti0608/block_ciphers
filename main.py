@@ -8,8 +8,8 @@ from task2 import submitAndVerify, submitAndAttack
 
 blockLen = AES.block_size
 #cipher_key = get_random_bytes(16)
-cipher_key = b"G@'=1\xc3\xc5\xf0^\x9a\xd9\xa4y\xa0z\x17"
 #iv = get_random_bytes(16)
+cipher_key = b"G@'=1\xc3\xc5\xf0^\x9a\xd9\xa4y\xa0z\x17"
 iv = b'l\x1f\x90\xbf0$\xe5\xc3\xbd 4\x14\xf0\xa4\x0eT'
 
 def main():
@@ -53,7 +53,6 @@ def to_RBG(information): #some python & list/tuple comprehension magic
 #perform task2 of the block_cipher assignment
 def task2():
     submitAndVerify()
-    
     #print("-------------")
     submitAndAttack()
 

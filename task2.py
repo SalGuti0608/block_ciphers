@@ -16,7 +16,6 @@ intIv = b'\x14\x1e\x14\x8e\x94\xb6\xa5\xdf\x14\x1e\x14\x8e\x94\xb6\xa5\xdf'
 
 def submitAndAttack():
     inputQuery = input("[Will be attacked]Message?: ")
-    print()
     encodedQuery = submit(inputQuery, intKey, intIv)
     #perform the attack under here!
 
@@ -28,35 +27,51 @@ def submitAndAttack():
     for i in range(0, numBlocks):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
-        # print(len(str(msg)))
-        # for c in str(msg):
-        #     print(c, end=" ")
-        # print()
+
         decMsg = aes.decrypt(msg) 
         xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
         plaintext += xorMsg
-        print(f"Decrypted message {len(xorMsg)} after xor: {xorMsg}")
-
-        #temp = strxor(attackBlock, decMsg)
-        #changedtext += temp
-        #print(f"bitflpped message {len(temp)} after xor: {temp}")
         
         xorMsg = msg    #msg is technically the n-1 ciphertext block
         temp = msg
 
     plaintext = plaintext.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ')
-
     plaintext = plaintext.encode()
 
     verRes = verify(plaintext, intKey, intIv, True)
-    print(f"Result: {verRes}")
+    print(f"Verify-Result: {verRes}")
 
+
+def attack(ciphertext):
+    blocks = []
+    num_blocks = len(ciphertext) // blockLen
+
+    for i in range(num_blocks): # Removing padding block cuz we can >:)
+        blocks.append(ciphertext[i*16: 16 + (i*16)])
+    
+    l = list(blocks[0])
+
+    l[0] = ord(chr(l[0])) ^ ord("B") ^ ord(";")
+    l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
+    l[11] = ord(chr(l[11]))^ ord("B") ^ ord(";")
+
+    blocks[0] = 1 #put back our intial ciphetext block
+
+    res = b""
+    for block in blocks:
+        print(len(block))
+        for c in block:
+            temp = str(c)
+            temp2 = temp.encode("UTF-8")
+            res += temp2
+
+    return res
 
 def submitAndVerify():
     inputQuery = input("Message?: ")
     encodedQuery = submit(inputQuery, intKey, intIv)
-    verRes = verify(encodedQuery, intKey, intIv)
-    print(verRes)
+    verRes = verify(encodedQuery, intKey, intIv, False)
+    print(f"Verify-Result: {verRes}")
 
 def submit(query, cipherKey, iv):
     prependStr = "userid=456;userdata="
