@@ -86,7 +86,7 @@ def submit(query, cipherKey, iv):
     return cbcQuery
 
 def verify(encQuery, cipherKey, iv, attacked=False):
-    isAdmin = b';admin=true;'
+    isAdmin = b'admin=true;'
 
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
