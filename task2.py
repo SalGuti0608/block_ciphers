@@ -24,18 +24,28 @@ def submitAndAttack():
     for i in range(0, numBlocks):
         msgIdx = i * blockLen
         msg = encodedQuery[msgIdx: msgIdx+blockLen]
-        print(msg)
-        
+
+
+        print(f"current ciphertext block:\n{msg}")
+        for thing in range(len(msg)):
+           print(f"at index:{thing} with the bit: {msg[thing]}")
+
         decMsg = aes.decrypt(msg)
         xorMsg = strxor(xorStr, decMsg)
         plaintext += xorMsg
-        print(xorMsg)
+        '''
+        print(f"Decoded-plaintext:{xorMsg}")
 
-        for thing in range(len(msg)):
-           print(f"at index:{thing} with the bit: {msg[thing]}")
+        for thing in range(len(xorMsg)):
+           print(f"at index:{thing} with the bit: {xorMsg[thing]}")
+        '''
+
         xorMsg = msg
 
     print(plaintext)
+
+    verRes = verify(encodedQuery, intKey, intIv)
+    print(verRes)
 
 
 def submitAndVerify():
