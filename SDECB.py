@@ -16,7 +16,6 @@ def pad(information,blockLen):
 
 def ecbEncrypt(key, information, mode=AES.MODE_ECB):
 	aes = AES.new(key, mode)
-
 	new_info = b""
 
 	for i in range(0, len(information), blockLen):
@@ -25,4 +24,3 @@ def ecbEncrypt(key, information, mode=AES.MODE_ECB):
 		new_info += encBlk
 
 	return new_info
-

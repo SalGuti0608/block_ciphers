@@ -4,16 +4,16 @@ from Crypto.Util.strxor import strxor
 
 blockLen = AES.block_size
 
+def pad(information,blockLen):
+	info_len = len(information)
+	pad = b"\x00" * (blockLen - (info_len % blockLen))
+	return (information + pad)
+
 def CBC(info, cipher_key=get_random_bytes(16), iv=get_random_bytes(16)):
 	ogLen = len(info)
 	paddedInfo = pad(info, blockLen)
 	encryptedInfo = cbcEncrypt(cipher_key, paddedInfo, iv, AES.MODE_CBC)
 	return encryptedInfo
-
-def pad(information,blockLen):
-	info_len = len(information)
-	pad = b"\x00" * (blockLen - (info_len % blockLen))
-	return (information + pad)
 
 def cbcEncrypt(key, information, iv, mode=AES.MODE_CBC):
 	aes = AES.new(key, mode, iv)
@@ -51,3 +51,20 @@ def decryptCBC(encQuery, cipherKey, iv):
     #the below line is how we would get back to our original string!, However we avoid this step with our attack
     #plaintext = urllib.parse.unquote(plaintext, "UTF-8")
     return plaintext
+
+def ECB(info,cipher_key=get_random_bytes(16)):
+	ogLen = len(info)
+	paddedInfo = pad(info, blockLen)
+	encryptedInfo = ecbEncrypt(cipher_key, paddedInfo)
+	return encryptedInfo
+
+def ecbEncrypt(key, information, mode=AES.MODE_ECB):
+	aes = AES.new(key, mode)
+	new_info = b""
+
+	for i in range(0, len(information), blockLen):
+		blk = information[i:i+blockLen]
+		encBlk = aes.encrypt(blk)
+		new_info += encBlk
+
+	return new_info

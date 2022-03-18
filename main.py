@@ -3,11 +3,10 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import sys
 
-from SDECB import ECB
-from SDCBC import CBC
-from confid import submitAndVerify 
+from task1 import ECB, CBC, decryptCBC
+from task2 import submitAndVerify 
 
-block_length = AES.block_size
+blockLen = AES.block_size
 cipher_key = get_random_bytes(16)
 iv = get_random_bytes(16)
 
@@ -15,7 +14,6 @@ def main():
     if len(sys.argv) >= 2:
         infile = sys.argv[1] 
         task1(infile)
-
     task2()
 
 #perform task1 of the block_ciphers assignment
