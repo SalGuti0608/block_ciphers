@@ -5,6 +5,7 @@ import sys
 
 from SDECB import ECB
 from SDCBC import CBC
+from confid import submitAndVerify 
 
 block_length = AES.block_size
 cipher_key = get_random_bytes(16)
@@ -14,6 +15,8 @@ def main():
     if len(sys.argv) >= 2:
         infile = sys.argv[1] 
         task1(infile)
+
+    task2()
 
 #perform task1 of the block_ciphers assignment
 def task1(inFile):
@@ -46,6 +49,10 @@ def to_RBG(information): #some python & list/tuple comprehension magic
         )
     pixels = tuple(zip(r,g,b))
     return pixels
+
+#perform task2 of the block_cipher assignment
+def task2():
+    submitAndVerify()
 
 if __name__ == "__main__":
     print("Hello World!")
