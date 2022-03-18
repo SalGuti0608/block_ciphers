@@ -20,10 +20,13 @@ def submitAndAttack():
 
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
     numBlocks = len(encodedQuery) // blockLen
+    print(encodedQuery)
+    encodedQuery = attack(encodedQuery)
+    print(encodedQuery)
     plaintext = b''
     xorStr = intIv
 
-    for i in range(0, 1):
+    for i in range(0, 0):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
 
@@ -45,6 +48,22 @@ def submitAndAttack():
     verRes = verify(encodedQuery, intKey, intIv)
     print(f"Result: {verRes}")
 
+
+def attack(ciphertext):
+    blocks = []
+    num_blocks = len(ciphertext) // blockLen
+
+    for i in range(num_blocks - 1): # Removing padding block cuz we can >:)
+        blocks.append(ciphertext[i*16: 16 + (i*16)])
+    
+    l = list(blocks[1])
+    print(l)
+    l[0] = ord(chr(l[0])) ^ ord("B") ^ ord(";")
+    l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
+    l[11] = ord(chr(l[11]))^ ord("B") ^ ord(";")
+    print(blocks[1])
+    print(b''.join(l))
+    # TODO return joint ciphertext string
 
 def submitAndVerify():
     inputQuery = input("Message?: ")
