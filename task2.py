@@ -50,6 +50,7 @@ def attack(ciphertext):
         blocks.append(ciphertext[i*16: 16 + (i*16)])
     
     l = list(blocks[0])
+    #becase we want to attack the information starting at block2, we have to attack block1
 
     l[0] = ord(chr(l[0])) ^ ord("B") ^ ord(";")
     l[6] = ord(chr(l[6])) ^ ord("D") ^ ord("=")
