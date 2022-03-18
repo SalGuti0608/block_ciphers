@@ -22,50 +22,65 @@ def submitAndAttack():
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
     numBlocks = len(encodedQuery) // blockLen
     print(encodedQuery)
+    '''
     print()
     print(f"Len of Query: {len(encodedQuery)}, numBlocks: {numBlocks}")
     print()
     for i in encodedQuery:
         print(f"num:{i}, chr:{chr(i)}")
+    '''
 
     plaintext = b''
     xorStr = intIv
 
-    paintext = b''
-    tmp = b'\x1e\x1e\x14\x8e\x94\xb6\xa5\xdf\x14\x1e\x14\x8e\x94\xb6\xa5\xdf'
+    changedtext = b''
+    #slight modification of IntIV
+    attackBlock = b'\x1e\x1e\x14\x8e\x94\xb6\xa5\xdf\x14\x1e\x14\x8e\x94\xb6\xa5\xdf'
 
     for i in range(0, numBlocks):
         msgIdx = i * blockLen # 
         msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
 
+        print(msg)
+        #OG first block = b"\xb3\xf5zfR\x1c\xd7'\xbe\xbfR\xd1x%\xc9i" 
+        # Originally, this will be the first block of ciphertext 
+        if i == 0:
+            msg = b"\xa5\xf5zfR\x1c\xd7'\xbe\xbfR\xd1x%\xc9i"
+        
+        t1 = binascii.hexlify(msg)
+        t2 = binascii.unhexlify(t1)
+        print(f"T1 is [{len(t1)}]: {t1}")
+        print(t1[:4])
+        print(f"T2 is [{len(t2)}]: {t2}")
+
+
         print(f"Block {i}")
         decMsg = aes.decrypt(msg) 
-        print(f"Decrypted message {len(decMsg)} before xor: {decMsg}")
+        #print(f"Decrypted message {len(decMsg)} before xor: {decMsg}")
 
         t = binascii.hexlify(decMsg)
-        print(f"Decrypt hexlified {len(t)} before xor: {t}")
+        #print(f"Decrypt hexlified {len(t)} before xor: {t}")
         y = binascii.unhexlify(t)
-        print(f"Decpt unhexlified {len(y)} before xor: {y}")
+        #print(f"Decpt unhexlified {len(y)} before xor: {y}")
 
-        #HAHAHAHAHA, WE CAN USE HEXLIFY TO MAKE THE NUMBERS EASY, AND THEN USE UNHEXLIFY TO SATISFY OUR CODE
         xorMsg = strxor(xorStr, y)
 
         plaintext += xorMsg
         print(f"Decrypted message {len(xorMsg)} after xor: {xorMsg}")
 
-        temp = strxor(tmp, decMsg)
-        paintext += temp
-        print(f"bitflpped message {len(temp)} after xor: {temp}")
+        #temp = strxor(attackBlock, decMsg)
+        #changedtext += temp
+        #print(f"bitflpped message {len(temp)} after xor: {temp}")
         
         xorMsg = msg    #msg is technically the n-1 ciphertext block
         temp = msg
 
     print(f"plaintext: {plaintext}")
-    print(f"PAINtext: {paintext}")
+    print(f"changedText: {changedtext}")
 
 
     attacked = True
-    verRes = verify(paintext, intKey, intIv, attacked)
+    verRes = verify(changedtext, intKey, intIv, attacked)
     print(f"Result: {verRes}")
 
 
