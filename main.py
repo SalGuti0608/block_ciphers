@@ -55,5 +55,4 @@ def task2():
     submitAndVerify()
 
 if __name__ == "__main__":
-    print("Hello World!")
     main()

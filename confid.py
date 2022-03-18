@@ -44,20 +44,29 @@ def verify(encQuery, cipherKey, iv):
 
     plaintext = b''
     xorStr = iv
+
     for i in range(0, numBlocks):
         msgIdx = i * blockLen
         msg = encQuery[msgIdx: msgIdx+blockLen]
         decMsg = aes.decrypt(msg)
         xorMsg = strxor(xorStr, decMsg)
+        print(xorMsg)
+        for thing in range(len(msg)):
+            print(f"at index:{thing} with the char: {msg[thing]}")
         plaintext += xorMsg
         xorMsg = msg
     #end of our own decryption
-    #decrypted Message = plaintext
 
+    '''
+    #the below line is how we would get back to our original string!, However we avoid this step with our attack
+    #plaintext = urllib.parse.unquote(plaintext, "UTF-8")
 
-    print(plaintext)
-    temp = b"admin" in plaintext
+    #print(f"P-text: {plaintext}")
+    #print(f"C-text: {encQuery}")
+    #temp = ";admin=true;" in plaintext
+    temp = b";admin=true;" in plaintext
     print(temp)
+    '''
 
     res = isAdmin in encQuery 
     return res
