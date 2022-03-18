@@ -3,7 +3,7 @@ from Crypto.Random import get_random_bytes
 import urllib.parse #god bless the Python gods for having a built-in function for just about anything
 from Crypto.Util.strxor import strxor
 
-from SDCBC import CBC, decryptCBC
+from task1 import CBC, decryptCBC
 
 blockLen = AES.block_size
 #int stands for intial
