@@ -16,10 +16,7 @@ def submitAndVerify():
     encodedQuery = submit(inputQuery, intKey, intIv)
     verRes = verify(encodedQuery, intKey, intIv)
     print(verRes)
-
     #perform the attack under here!
- 
-
 
 
 def submit(query, cipherKey, iv):
@@ -37,11 +34,15 @@ def verify(encQuery, cipherKey, iv):
     isAdmin = b";admin=true;"
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
+    plaintext = decryptCBC(encQuery, cipherKey, iv)
+    print(plaintext)
 
-    #beginning of our own decryption
+    res = isAdmin in plaintext 
+    return res
+
+def decryptCBC(encQuery, cipherKey, iv):
     aes = AES.new(cipherKey, AES.MODE_CBC, iv)
     numBlocks = len(encQuery) // blockLen
-
     plaintext = b''
     xorStr = iv
 
@@ -55,18 +56,7 @@ def verify(encQuery, cipherKey, iv):
             print(f"at index:{thing} with the char: {msg[thing]}")
         plaintext += xorMsg
         xorMsg = msg
-    #end of our own decryption
 
-    '''
     #the below line is how we would get back to our original string!, However we avoid this step with our attack
     #plaintext = urllib.parse.unquote(plaintext, "UTF-8")
-
-    #print(f"P-text: {plaintext}")
-    #print(f"C-text: {encQuery}")
-    #temp = ";admin=true;" in plaintext
-    temp = b";admin=true;" in plaintext
-    print(temp)
-    '''
-
-    res = isAdmin in encQuery 
-    return res
+    return plaintext
