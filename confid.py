@@ -35,9 +35,9 @@ def submit(query, cipherKey, iv):
 
 def verify(encQuery, cipherKey, iv):
     isAdmin = b";admin=true;"
-
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
+
     #beginning of our own decryption
     aes = AES.new(cipherKey, AES.MODE_CBC, iv)
     numBlocks = len(encQuery) // blockLen
@@ -54,8 +54,10 @@ def verify(encQuery, cipherKey, iv):
     #end of our own decryption
     #decrypted Message = plaintext
 
+
     print(plaintext)
-    res = isAdmin in encQuery 
     temp = b"admin" in plaintext
     print(temp)
+
+    res = isAdmin in encQuery 
     return res
