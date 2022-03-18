@@ -10,13 +10,19 @@ blockLen = AES.block_size
 intKey = get_random_bytes(16)
 intIv = get_random_bytes(16)
 
-
 def submitAndVerify():
     inputQuery = input("Message?: ")
     encodedQuery = submit(inputQuery, intKey, intIv)
     verRes = verify(encodedQuery, intKey, intIv)
     print(verRes)
+
+def submitAndAttack():
+    inputQuery = input("[Will be attacked]Message?: ")
+    encodedQuery = submit(inputQuery, intKey, intIv)
     #perform the attack under here!
+
+    verRes = verify(encodedQuery, intKey, intIv)
+    print(verRes)
 
 
 def submit(query, cipherKey, iv):
@@ -35,7 +41,9 @@ def verify(encQuery, cipherKey, iv):
     #take the encoded query => byte flip it
     #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
     plaintext = decryptCBC(encQuery, cipherKey, iv)
-    print(plaintext)
+
+    #THE UNDERNEATH COMMENT HELPS HELLA FOR DEBUGGING
+    #print(plaintext)
 
     res = isAdmin in plaintext 
     return res

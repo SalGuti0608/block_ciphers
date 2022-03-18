@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 import sys
 
 from task1 import ECB, CBC, decryptCBC
-from task2 import submitAndVerify 
+from task2 import submitAndVerify, submitAndAttack 
 
 blockLen = AES.block_size
 cipher_key = get_random_bytes(16)
@@ -51,6 +51,8 @@ def to_RBG(information): #some python & list/tuple comprehension magic
 #perform task2 of the block_cipher assignment
 def task2():
     submitAndVerify()
+    print("-------------")
+    submitAndAttack()
 
 if __name__ == "__main__":
     main()
