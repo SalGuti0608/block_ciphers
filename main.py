@@ -52,7 +52,8 @@ def to_RBG(information): #some python & list/tuple comprehension magic
 
 #perform task2 of the block_cipher assignment
 def task2():
-    #submitAndVerify()
+   #################### submitAndVerify()
+    print("remember to add submitAndVerify back in!")
     #print("-------------")
     submitAndAttack()
 
