@@ -96,11 +96,10 @@ def verify(encQuery, cipherKey, iv, attacked=False):
     if not attacked:
         plaintext = decryptCBC(encQuery, cipherKey, iv)
     else:
-        plaintext = encQuery
-        plaintext = plaintext.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ')
-        plaintext = plaintext.encode()
-    #THE UNDERNEATH COMMENT HELPS HELLA FOR DEBUGGING
-    #print(plaintext)
+        # Decoding from byte string to string and then back to a byte string since UTF won't show 
+        # characters of = and ; needed for verification although they are there in the byte string 
+        plaintext = encQuery.decode().replace('%3D', '=').replace('%3B', ';').replace('%20', ' ').encode()
+        #plaintext = encQuery
 
     res = isAdmin in plaintext 
     return res
