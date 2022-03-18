@@ -1,7 +1,8 @@
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
-import urllib.parse #god bless the Python gods for having a built-in function for just about anything
 from Crypto.Util.strxor import strxor
+import urllib.parse #god bless the Python gods for having a built-in function for just about anything
+import binascii
 
 from task1 import CBC, decryptCBC
 
@@ -21,6 +22,11 @@ def submitAndAttack():
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
     numBlocks = len(encodedQuery) // blockLen
     print(encodedQuery)
+    print()
+    print(f"Len of Query: {len(encodedQuery)}, numBlocks: {numBlocks}")
+    print()
+    for i in encodedQuery:
+        print(f"num:{i}, chr:{chr(i)}")
 
     plaintext = b''
     xorStr = intIv
@@ -36,7 +42,14 @@ def submitAndAttack():
         decMsg = aes.decrypt(msg) 
         print(f"Decrypted message {len(decMsg)} before xor: {decMsg}")
 
-        xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
+        t = binascii.hexlify(decMsg)
+        print(f"Decrypt hexlified {len(t)} before xor: {t}")
+        y = binascii.unhexlify(t)
+        print(f"Decpt unhexlified {len(y)} before xor: {y}")
+
+        #HAHAHAHAHA, WE CAN USE HEXLIFY TO MAKE THE NUMBERS EASY, AND THEN USE UNHEXLIFY TO SATISFY OUR CODE
+        xorMsg = strxor(xorStr, y)
+
         plaintext += xorMsg
         print(f"Decrypted message {len(xorMsg)} after xor: {xorMsg}")
 
@@ -50,8 +63,14 @@ def submitAndAttack():
     print(f"plaintext: {plaintext}")
     print(f"PAINtext: {paintext}")
 
+
+
     verRes = verify(encodedQuery, intKey, intIv)
     print(f"Result: {verRes}")
+
+
+def byteFlipCiphertext(encQuery, attackBlock):
+    pass
 
 
 def attack(ciphertext):
@@ -79,7 +98,7 @@ def submitAndVerify():
     print(verRes)
 
 def submit(query, cipherKey, iv):
-    prependStr = "userid=456; userdata="
+    prependStr = "userid=456;userdata="
     appendStr = ";session-id=31337"
     # we have to get the 
     fullQuery = prependStr + query + appendStr
