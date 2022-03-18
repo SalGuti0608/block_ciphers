@@ -6,13 +6,11 @@ import sys
 from SDECB import ECB
 from SDCBC import CBC
 
+block_length = AES.block_size
+cipher_key = get_random_bytes(16)
+iv = get_random_bytes(16)
 
 def main():
-    block_length = AES.block_size
-    cipher_key = get_random_bytes(16)
-    iv = get_random_bytes(16)
-
-
     if len(sys.argv) >= 2:
         infile = sys.argv[1] 
         task1(infile)
@@ -27,8 +25,8 @@ def task1(inFile):
     info = im.convert("RGB").tobytes()
     ogLen = len(info)
 
-    ecbInfo = ECB(info)
-    cbcInfo = CBC(info)
+    ecbInfo = ECB(info,cipher_key)
+    cbcInfo = CBC(info,cipher_key,iv)
     #create our new resulting images after encrypting them seperatly
     createNewBMP(im, ecbInfo, ogLen,"ECB")
     createNewBMP(im, cbcInfo, ogLen,"CBC")
@@ -50,5 +48,5 @@ def to_RBG(information): #some python & list/tuple comprehension magic
     return pixels
 
 if __name__ == "__main__":
-    print("Trying to understand AES, CBC, and ECS. :)")
+    print("Hello World!")
     main()
