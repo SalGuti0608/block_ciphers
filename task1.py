@@ -9,7 +9,7 @@ def pad(information,blockLen):
 	pad = b"\x00" * (blockLen - (info_len % blockLen))
 	return (information + pad)
 
-def CBC(info, cipher_key=get_random_bytes(16), iv=get_random_bytes(16)):
+def CBC(info, cipher_key, iv):
 	ogLen = len(info)
 	paddedInfo = pad(info, blockLen)
 	encryptedInfo = cbcEncrypt(cipher_key, paddedInfo, iv, AES.MODE_CBC)
@@ -48,7 +48,7 @@ def decryptCBC(encQuery, cipherKey, iv):
     #plaintext = urllib.parse.unquote(plaintext, "UTF-8")
     return plaintext
 
-def ECB(info,cipher_key=get_random_bytes(16)):
+def ECB(info,cipher_key):
 	ogLen = len(info)
 	paddedInfo = pad(info, blockLen)
 	encryptedInfo = ecbEncrypt(cipher_key, paddedInfo)

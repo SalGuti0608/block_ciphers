@@ -15,7 +15,7 @@ intIv = b'A^3l\x1e\x14\x8e\x94\xb6\x077P\x19j\x8c\xca'
 def submitAndAttack():
     inputQuery = input("[Will be attacked]Message?: ")
     encodedQuery = submit(inputQuery, intKey, intIv)
-    print(encodedQuery)
+    #print(encodedQuery)
     #perform the attack under here!
 
     aes = AES.new(intKey, AES.MODE_CBC, intIv)
@@ -23,24 +23,27 @@ def submitAndAttack():
     plaintext = b''
     xorStr = intIv
 
-    for i in range(0, numBlocks):
-        msgIdx = i * blockLen
-        msg = encodedQuery[msgIdx: msgIdx+blockLen]
-
+    for i in range(0, 1):
+        msgIdx = i * blockLen # 
+        msg = encodedQuery[msgIdx: msgIdx+blockLen] # block
 
         print(f"Block {i}: {msg}")
+        # print(len(str(msg)))
+        # for c in str(msg):
+        #     print(c, end=" ")
+        # print()
 
-        decMsg = aes.decrypt(msg)
-        xorMsg = strxor(xorStr, decMsg)
-        print(f"Block {i}: {xorMsg}")
+        decMsg = aes.decrypt(msg) 
+        print(f"Decrypted {len(decMsg)} before xor: {decMsg}")
+        xorMsg = strxor(xorStr, decMsg) # Arrow between decrypt() and xor
         
         plaintext += xorMsg
         xorMsg = msg
 
-    print(plaintext)
+    print(f"plaintext: {plaintext}")
 
     verRes = verify(encodedQuery, intKey, intIv)
-    print(verRes)
+    print(f"Result: {verRes}")
 
 
 def submitAndVerify():
