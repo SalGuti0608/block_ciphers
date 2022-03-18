@@ -17,6 +17,7 @@ def main():
         infile = sys.argv[1] 
         task1(infile)
 
+#perform task1 of the block_ciphers assignment
 def task1(inFile):
     try:
         im = Image.open(inFile, mode="r")
@@ -25,19 +26,20 @@ def task1(inFile):
         return
     info = im.convert("RGB").tobytes()
     ogLen = len(info)
+
     ecbInfo = ECB(info)
     cbcInfo = CBC(info)
-
+    #create our new resulting images after encrypting them seperatly
     createNewBMP(im, ecbInfo, ogLen,"ECB")
     createNewBMP(im, cbcInfo, ogLen,"CBC")
 
-def createNewBMP(img,encryptedInfo, infoLen, encType):
+def createNewBMP(img,encryptedInfo, infoLen, encType):  #given how we use Pillow, this is how we translate our encoded info back to something that can processed
     newImage = to_RBG(encryptedInfo[:infoLen])
     im2 = Image.new(img.mode, img.size) #let's go pillow for making image processing on our parts easy
     im2.putdata(newImage)
     im2.save(encType + "res.BMP", "BMP")
 
-def to_RBG(information):
+def to_RBG(information): #some python & list/tuple comprehension magic
     infoLen = len(information)
     r,g,b = tuple(
         map(
