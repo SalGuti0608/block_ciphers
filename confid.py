@@ -13,7 +13,12 @@ intIv = get_random_bytes(16)
 def submitAndVerify():
     inputQuery = input("Message?: ")
     encodedQuery = submit(inputQuery, intKey, intIv)
-    print(f"This is the regular encodedQuery: {encodedQuery}") 
+    verRes = verify(encodedQuery, intKey, intIv)
+    print(verRes)
+
+    #perform the byte flip shit
+
+ 
 
 
 def submit(query, cipherKey, iv):
@@ -28,4 +33,15 @@ def submit(query, cipherKey, iv):
     return cbcQuery
 
 def verify(encQuery, cipherKey, iv):
-    
+    isAdmin = b";admin=true;"
+
+    #DON'T TRY DECODING THE STRING, AES WILL ONLY YELL AT YOU!
+    '''
+    aes = AES.new(intKey, AES.MODE_CBC, intIv) 
+    plaintext = aes.decrypt(encodedQuery).decode("UTF-8")
+    '''
+    #take the encoded query => byte flip it
+    #take bit-flipped result => look for "isAdmin" variable within the bit flipped query?
+
+    res = isAdmin in encQuery 
+    return res
